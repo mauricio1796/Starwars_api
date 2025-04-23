@@ -1,0 +1,39 @@
+/* styles.css */
+.films-container {
+    margin-top: 20px;
+    padding: 20px;
+    text-align: right; /* Alinea el contenido hacia la derecha */
+  }
+  
+  .films-container h2 {
+    font-size: 2rem;
+    text-align: center; /* Centra el título si lo prefieres */
+  }
+  
+  .films-container ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alinea los items de la lista hacia la derecha */
+  }
+  
+  .films-container li {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80%; /* Limita el ancho de los cuadros para que no ocupen toda la pantalla */
+    text-align: left; /* Alinea el texto dentro de cada cuadro hacia la izquierda */
+  }
+  
+  .films-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+  
+  .error-text {
+    color: red;
+    text-align: center;
+  }
+  

@@ -37,7 +37,7 @@ function Naves() {
     }));
   };
 
-  // 🔍 Filtro aplicado a nombre y modelo
+  
   const navesFiltradas = naves.filter(n =>
     n.name.toLowerCase().includes(filtro.toLowerCase()) ||
     n.model.toLowerCase().includes(filtro.toLowerCase())

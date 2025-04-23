@@ -7,6 +7,7 @@ function Filtros({ tipoSeleccionado, setTipoSeleccionado }) {
         <option value="people">Personajes</option>
         <option value="planets">Planetas</option>
         <option value="starships">Naves</option>
+        
       </select>
     </div>
   );

@@ -1,0 +1,64 @@
+/* HistoriaOriginal.css */
+
+.historia-container {
+    padding: 3rem;
+    background: radial-gradient(circle at center, #000 20%, #111 100%);
+    color: #ffe81f;
+    font-family: 'Orbitron', sans-serif;
+    line-height: 1.7;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .historia-container h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px #ffe81f;
+    border-bottom: 2px solid #ffe81f;
+    padding-bottom: 1rem;
+  }
+  
+  .epoca {
+    margin-bottom: 3rem;
+    border-left: 5px solid #ffe81f;
+    padding-left: 1.5rem;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .epoca h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+  }
+  
+  .epoca img {
+    width: 100%;
+    height: auto; 
+    max-height: 400px;
+     
+    border: 2px solid #ffe81f;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background-color: #000; 
+  }
+  
+  .epoca p {
+    font-size: 1.1rem;
+    color: #ccc;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Fuente temática */
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+  
