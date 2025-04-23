@@ -1,7 +1,7 @@
 .container {
-  margin-left: 280px; /* espacio igual al ancho del menú */
+  margin-left: 280px; 
   padding: 2rem;
-  background-color: #f9f9f9;
+  background-color: #0e0d0d;
   height: 100vh;
   overflow-y: auto;
   display: flex;
@@ -46,7 +46,7 @@
 
 .card-subtitle {
   font-size: 1rem;
-  color: #777;
+  color: #0c0c0c;
   margin-top: 1rem;
   margin-bottom: 0.25rem;
 }
