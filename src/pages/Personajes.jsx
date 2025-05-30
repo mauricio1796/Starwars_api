@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Cards.css';
-import Filtros from '../Componentes/Filtros'; // Ajusta la ruta si es necesario
+import Filtros from '../Componentes/Filtros';
+import { supabase } from '../supabaseClient'; // Ajusta la ruta si es necesario
 
 function getIdFromUrl(url) {
   const parts = url.split('/');
@@ -16,17 +17,45 @@ function Personajes() {
     const fetchPersonajes = async () => {
       let url = 'https://swapi.py4e.com/api/people/';
       let allPersonajes = [];
-      
+
       while (url) {
         const res = await fetch(url);
         const data = await res.json();
         allPersonajes = [...allPersonajes, ...data.results];
-        url = data.next; // Si hay más páginas, actualiza la URL
+        url = data.next;
       }
-      
+
       setPersonajes(allPersonajes);
+
+      // Guardar en Supabase
+      for (const p of allPersonajes) {
+        const id = getIdFromUrl(p.url);
+
+        const { data: existente } = await supabase
+          .from('personajes')
+          .select('id')
+          .eq('nombre', p.name)
+          .maybeSingle();
+
+        if (!existente) {
+          const { error } = await supabase.from('personajes').insert([{
+            nombre: p.name,
+            altura: p.height,
+            peso: p.mass,
+            cabello: p.hair_color,
+            piel: p.skin_color,
+            ojos: p.eye_color,
+            nacimiento: p.birth_year,
+            genero: p.gender
+          }]);
+
+          if (error) {
+            console.error("Error guardando personaje:", p.name, error.message);
+          }
+        }
+      }
     };
-  
+
     fetchPersonajes();
   }, []);
 
@@ -37,7 +66,6 @@ function Personajes() {
     }));
   };
 
-  // 🔍 Filtra por nombre o género
   const personajesFiltrados = personajes.filter((p) =>
     p.name.toLowerCase().includes(filtro.toLowerCase()) ||
     p.gender.toLowerCase().includes(filtro.toLowerCase())

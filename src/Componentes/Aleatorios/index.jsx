@@ -173,16 +173,39 @@ const Aleatorios = () => {
     },
   ];
   const todos = [...personajes, ...naves, ...planetas, ...vehiculos];
-  
   const [seleccionados, setSeleccionados] = useState([]);
 
-  // Función para mezclar y seleccionar 10 elementos aleatorios
+  // Mezclar y seleccionar aleatorios, además de guardar en favoritos
   const mezclarAleatorios = () => {
     const aleatorios = todos.sort(() => 0.5 - Math.random()).slice(0, 10);
     setSeleccionados(aleatorios);
+
+    const favoritosGuardados = JSON.parse(localStorage.getItem("favoritosStarWars")) || [];
+
+    const nuevosFavoritos = [...favoritosGuardados];
+    aleatorios.forEach(nuevo => {
+      const yaExiste = favoritosGuardados.some(fav => fav.nombre === nuevo.nombre);
+      if (!yaExiste) {
+        nuevosFavoritos.push(nuevo);
+      }
+    });
+
+    localStorage.setItem("favoritosStarWars", JSON.stringify(nuevosFavoritos));
   };
 
-  // Cargar aleatorios al montar el componente
+  // Agregar a capturados (si no está repetido)
+  const capturar = (item) => {
+    const capturados = JSON.parse(localStorage.getItem("capturadosStarWars")) || [];
+    const yaExiste = capturados.some(c => c.nombre === item.nombre);
+    if (!yaExiste) {
+      const nuevos = [...capturados, item];
+      localStorage.setItem("capturadosStarWars", JSON.stringify(nuevos));
+      alert(`${item.nombre} ha sido capturado y guardado en el álbum.`);
+    } else {
+      alert(`${item.nombre} ya está en tu álbum de capturados.`);
+    }
+  };
+
   useEffect(() => {
     mezclarAleatorios();
   }, []);
@@ -190,15 +213,15 @@ const Aleatorios = () => {
   return (
     <div className="container">
       <h1 style={{ marginBottom: '2rem' }}>Aleatorios del Universo Star Wars</h1>
-      <button 
-        onClick={mezclarAleatorios} 
-        style={{ 
-          marginBottom: '2rem', 
-          padding: '10px 20px', 
-          fontSize: '16px', 
-          borderRadius: '8px', 
-          border: 'none', 
-          backgroundColor: '#0077cc', 
+      <button
+        onClick={mezclarAleatorios}
+        style={{
+          marginBottom: '2rem',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '8px',
+          border: 'none',
+          backgroundColor: '#0077cc',
           color: 'white',
           cursor: 'pointer'
         }}
@@ -207,7 +230,23 @@ const Aleatorios = () => {
       </button>
       <div className="grid">
         {seleccionados.map((item, index) => (
-          <div className="card" key={index}>
+          <div className="card" key={index} style={{ position: 'relative' }}>
+            <button
+              onClick={() => capturar(item)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: 'red'
+              }}
+              title="Capturar"
+            >
+              ❤️
+            </button>
             <div className="card-details">
               <h3>{item.nombre}</h3>
               <p className="card-subtitle">{item.resumen}</p>

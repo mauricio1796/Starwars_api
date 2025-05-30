@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Cards.css';
-import Filtros from '../Componentes/Filtros'; // Asegúrate de que esta ruta es correcta
+import Filtros from '../Componentes/Filtros';
+import { supabase } from '../supabaseClient';
 
 function getIdFromUrl(url) {
   const parts = url.split('/');
@@ -16,17 +17,49 @@ function Vehiculos() {
     const fetchVehiculos = async () => {
       let url = 'https://swapi.py4e.com/api/vehicles/';
       let allVehicles = [];
-      
-      while (url) {
-        const res = await fetch(url);
-        const data = await res.json();
-        allVehicles = [...allVehicles, ...data.results];
-        url = data.next; // Si hay más páginas, actualiza la URL
+
+      try {
+        while (url) {
+          const res = await fetch(url);
+          const data = await res.json();
+          allVehicles = [...allVehicles, ...data.results];
+          url = data.next;
+        }
+
+        setVehiculos(allVehicles);
+
+        for (const v of allVehicles) {
+          if (!v.name) continue;
+
+          const { data: existe } = await supabase
+            .from('vehiculos')
+            .select('id')
+            .eq('nombre', v.name)
+            .maybeSingle();
+
+          if (!existe) {
+            const { error } = await supabase.from('vehiculos').insert([{
+              nombre: v.name,
+              modelo: v.model,
+              fabricante: v.manufacturer,
+              costo: String(v.cost_in_credits),
+              longitud: String(v.length),
+              velocidad: String(v.max_atmosphering_speed),
+              tripulacion: v.crew,
+              pasajeros: v.passengers,
+              clase_vehiculo: v.vehicle_class
+            }]);
+
+            if (error) {
+              console.error(`Error guardando vehículo "${v.name}":`, error.message);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error al cargar o guardar vehículos:", error);
       }
-      
-      setVehiculos(allVehicles);
     };
-  
+
     fetchVehiculos();
   }, []);
 
@@ -47,7 +80,11 @@ function Vehiculos() {
   return (
     <div className="container">
       <h2>Vehículos</h2>
-      <Filtros value={filtro} onChange={setFiltro} placeholder="Buscar por nombre, modelo, fabricante o clase..." />
+      <Filtros
+        value={filtro}
+        onChange={setFiltro}
+        placeholder="Buscar por nombre, modelo, fabricante o clase..."
+      />
       <div className="grid">
         {vehiculosFiltrados.map((v) => {
           const id = getIdFromUrl(v.url);

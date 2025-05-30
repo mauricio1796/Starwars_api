@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Cards.css';
-import Filtros from '../Componentes/Filtros'; // Ajusta esta ruta si cambia
+import Filtros from '../Componentes/Filtros';
+import { supabase } from '../supabaseClient'; // Asegúrate de que esta ruta es correcta
 
 function getIdFromUrl(url) {
   const parts = url.split('/');
@@ -16,17 +17,44 @@ function Planetas() {
     const fetchPlanetas = async () => {
       let url = 'https://swapi.py4e.com/api/planets/';
       let allPlanets = [];
-      
+
       while (url) {
         const res = await fetch(url);
         const data = await res.json();
         allPlanets = [...allPlanets, ...data.results];
-        url = data.next; // Se actualiza la URL con la siguiente página, si existe
+        url = data.next;
       }
-      
+
       setPlanetas(allPlanets);
+
+      // Guardar en Supabase
+      for (const p of allPlanets) {
+        const { data: existente } = await supabase
+          .from('planetas')
+          .select('id')
+          .eq('nombre', p.name)
+          .maybeSingle();
+
+        if (!existente) {
+          const { error } = await supabase.from('planetas').insert([{
+            nombre: p.name,
+            rotacion: p.rotation_period,
+            orbita: p.orbital_period,
+            diametro: p.diameter,
+            clima: p.climate,
+            gravedad: p.gravity,
+            terreno: p.terrain,
+            superficie_agua: p.surface_water,
+            poblacion: p.population
+          }]);
+
+          if (error) {
+            console.error("Error guardando planeta:", p.name, error.message);
+          }
+        }
+      }
     };
-  
+
     fetchPlanetas();
   }, []);
 

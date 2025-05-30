@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './style.css';
-import { auth } from "../../firebase/firebase"; // 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { supabase } from '../../supabaseClient'; // Importa tu cliente de Supabase
 
 const Login = () => {
   const [modoRegistro, setModoRegistro] = useState(false);
@@ -13,17 +12,30 @@ const Login = () => {
   const manejarSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setMensajeExito(''); // Resetear mensaje de éxito al hacer submit
+    setMensajeExito('');
+
     try {
+      let respuesta;
+
       if (modoRegistro) {
-        await createUserWithEmailAndPassword(auth, correo, password);
-        setMensajeExito('¡Usuario registrado exitosamente!'); // Mensaje de éxito
+        respuesta = await supabase.auth.signUp({
+          email: correo,
+          password: password,
+        });
+
+        if (respuesta.error) throw respuesta.error;
+        setMensajeExito('¡Usuario registrado exitosamente! Revisa tu correo para confirmar.');
       } else {
-        await signInWithEmailAndPassword(auth, correo, password);
+        respuesta = await supabase.auth.signInWithPassword({
+          email: correo,
+          password: password,
+        });
+
+        if (respuesta.error) throw respuesta.error;
         setMensajeExito('¡Inicio de sesión exitoso! Bienvenido!');
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Ocurrió un error');
     }
   };
 
@@ -50,12 +62,11 @@ const Login = () => {
         </button>
         {error && <p className="error-text">{error}</p>}
       </form>
-      
-      {/* Mostrar mensaje de éxito con animación */}
+
       {mensajeExito && (
         <p className="success-text fade-in">{mensajeExito}</p>
       )}
-      
+
       <p className="toggle-text" onClick={() => setModoRegistro(!modoRegistro)}>
         {modoRegistro ? '¿Ya tienes cuenta? Inicia sesión aquí' : '¿No tienes cuenta? Regístrate'}
       </p>

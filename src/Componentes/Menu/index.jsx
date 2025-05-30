@@ -29,10 +29,12 @@ const Menu = () => {
             </ul>
           )}
         </li>
-        <li><Link to="/Favoritos">Favoritos</Link></li>
+        <li><Link to="/Favoritos">Capturados</Link></li>
+         <li><Link to="/capturados">Album</Link></li>
         <li><Link to="/Historia">Historia</Link></li>
         <li><Link to="/Login">Login</Link></li>
         <li><Link to="/Films">Peliculas</Link></li>
+         <Link to="/starwars-quiz">Juego Star Wars</Link>
         
       </ul>
     </nav>
